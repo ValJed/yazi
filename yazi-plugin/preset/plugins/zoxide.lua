@@ -87,14 +87,19 @@ local function entry()
 		return fail("No directory history found, check Zoxide's doc to set it up and restart Yazi.")
 	end
 
-	local _permit = ya.hide()
+	local opts = options()
+	local extra_opts = os.getenv("_ZO_FZF_EXTRA_OPTS")
+	if extra_opts then
+		opts = opts .. " " .. extra_opts
+	end
+
 	local child, err1 = Command("zoxide")
 		:args({ "query", "-i", "--exclude" })
 		:arg(st.cwd)
 		:env("SHELL", "sh")
 		:env("CLICOLOR", 1)
 		:env("CLICOLOR_FORCE", 1)
-		:env("_ZO_FZF_OPTS", options())
+		:env("_ZO_FZF_OPTS", opts)
 		:stdin(Command.INHERIT)
 		:stdout(Command.PIPED)
 		:stderr(Command.PIPED)
